@@ -1,0 +1,7 @@
+
+winapi_vs_pthread/.vs/
+winapi_vs_pthread/x64
+winapi_vs_pthread/packages
+winapi_vs_pthread/ConsoleApplication1/x64
+winapi_vs_pthread/ConsoleApplication1/*.filters
+winapi_vs_pthread/ConsoleApplication1/*.user
