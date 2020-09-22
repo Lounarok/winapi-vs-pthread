@@ -4,10 +4,6 @@
 #include <iostream>
 #include <windows.h>
 
-#define HAVE_STRUCT_TIMESPEC // pthread doesn't do time.h guard, woops
-#include <pthread.h>
-
-
 DWORD WINAPI helloworld(LPVOID prm) {
     DWORD cpuId = GetCurrentProcessorNumber();
     std::cout << "Hello thread on cpu "<< cpuId <<std::endl;
@@ -25,7 +21,7 @@ int main()
         0,// immediately run it
         NULL
     );
-    Sleep(50);
+    WaitForSingleObject(hInstantRun, INFINITE);
     std::cout << "WINAPI create instant run done\n";
     CloseHandle(hInstantRun);
 
@@ -41,7 +37,7 @@ int main()
     SetThreadAffinityMask(hSuspendRun, 0x01);
     std::cout << "WINAPI resume and always should be cpu 0 \n";
     ResumeThread(hSuspendRun);
-    Sleep(50);
+    WaitForSingleObject(hSuspendRun, INFINITE);
     std::cout << "WINAPI resume done \n";
     CloseHandle(hSuspendRun);
 
