@@ -2,19 +2,22 @@
 //
 
 #include <iostream>
+#include <windows.h>
+
 #define HAVE_STRUCT_TIMESPEC // pthread doesn't do time.h guard, woops
 #include <pthread.h>
-#include <windows.h>    
+
 
 DWORD WINAPI helloworld(LPVOID prm) {
-    std::cout << "Hello thread\n";
+    DWORD cpuId = GetCurrentProcessorNumber();
+    std::cout << "Hello thread on cpu "<< cpuId <<std::endl;
     return 0;
 }
 
 int main()
 {
     std::cout << "WINAPI create instant run\n";
-    HANDLE instantRun = CreateThread(
+    HANDLE hInstantRun = CreateThread(
         NULL,
         0,
         &helloworld,
@@ -24,10 +27,10 @@ int main()
     );
     Sleep(50);
     std::cout << "WINAPI create instant run done\n";
-    CloseHandle(instantRun);
+    CloseHandle(hInstantRun);
 
     std::cout << "WINAPI create suspend run\n";
-    HANDLE suspendRun = CreateThread(
+    HANDLE hSuspendRun = CreateThread(
         NULL,
         0,
         &helloworld,
@@ -35,16 +38,13 @@ int main()
         CREATE_SUSPENDED,// immediately run it
         NULL
     );
-    std::cout << "WINAPI resume \n";
-    ResumeThread(suspendRun);
+    SetThreadAffinityMask(hSuspendRun, 0x01);
+    std::cout << "WINAPI resume and always should be cpu 0 \n";
+    ResumeThread(hSuspendRun);
     Sleep(50);
     std::cout << "WINAPI resume done \n";
-    CloseHandle(suspendRun);
+    CloseHandle(hSuspendRun);
 
-    // undone, test pthread int ret = pthread_create(  )
-
-
-    // Test cpu affinity if possible
     return 0;
 }
 
